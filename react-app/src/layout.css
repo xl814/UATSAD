@@ -1,0 +1,12 @@
+.top_bar {
+    display: 'flex';
+    justify-content: flex-end;
+}
+
+
+
+.caption {
+    font-family: 'Playfair Display', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
