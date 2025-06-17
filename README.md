@@ -18,25 +18,38 @@ pip install -r requirements.txt
 ```
 
 ## Result Reproduction
-1. Toy experiment (For the related implementation, please referto `src/`).
-    - the results in the main text(append `plot` for visualization): 
-    ```bash
-    ./scripts/toy_experiment.sh
-    ```
+1. Toy experiment (For the related implementation, please referto `src/`):
+    - reproduce the **experiment 1** in the main text:
+        ```bash
+        ./scripts/toy_experiment.sh
+        ```
+        we provide a notebbok to visualize the toy example result in `src/toy_example.ipynb`.
     - the result of hyperparameter sensitivity analysis experiments:
-    ```bash
-    ./scripts/toy_experiment.sh sumplement
-     ```
-2. Uncertainty calibration experiments. 
+        ```bash
+        ./scripts/toy_experiment.sh sumplement
+        ```
+2. Uncertainty calibration experimens reported in the paper 
     ```bash
     ./scripts/run.sh
     ```
-    We provide a notebook to visualize the uncertainty calibration curves from the paper in `src/epic_alea_evaluation.ipynb`.
+
+    We also provide a notebook to visualize the uncertainty calibration curves in `src/epic_alea_evaluation.ipynb`.
 
 ## Run the Application
 ### 1. Run the server
+- Take `SMAP-P1` as an example, we first train the model :
+    ```bash
+    python ./server/process_model.py 
+    ```
+- And, load the trained model to run the server:
+    ```bash
+    fastapi dev server/main.py
+    ```
 ### 2. Launch UATSAD
-### 3. Use your data
+```bash
+    cd react-app
+    npm run dev
+```
 ## Cite this work
 
 ## License

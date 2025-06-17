@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def load_SWAT_FIT502(abspath = False):
     if abspath == False:
-        test_df = pd.read_csv('datasets/SWaT/SWaT_test_original.csv')
+        test_df = pd.read_csv('./datasets/SWaT/SWaT_test_original.csv')
 
     test_np = test_df['FIT502'].to_numpy() # AIT501
     test_label = test_df['label'].to_numpy()
@@ -26,11 +26,32 @@ def load_SWAT_FIT502(abspath = False):
     test = scaler.transform(test)
     valid = scaler.transform(valid)
 
+
+def load_toy_example(abspath = False):
+    if abspath == False:
+        train_df = pd.read_csv('./datasets/toy_example_train.csv')
+        test_df = pd.read_csv('./datasets/toy_example_test.csv')
+    training = train_df['value'].to_numpy().reshape(-1, 1)
+    valid = training
+    test = test_df['value'].to_numpy().reshape(-1, 1)
+
+    scaler = StandardScaler()
+    scaler.fit(training)
+    training = scaler.transform(training)
+    test = scaler.transform(test)
+    valid = scaler.transform(valid)
+
+    print(f"training shape: {training.shape}")
+    print(f"test shape: {test.shape}")
+    print(f"valid shape: {valid.shape}")
+    
+    return training, test, valid
+
+
 def load_SWAT_PIT502(abspath = False):
     if abspath == False:
-        test_df = pd.read_csv('datasets/SWaT/SWaT_test_original.csv')
-    else:
-        test_df = pd.read_csv('/home/new_lab/test/ensemble_bae/datasets/SWaT/SWaT_test_original.csv')
+        test_df = pd.read_csv('./datasets/SWaT/SWaT_test_original.csv')
+
     
     test_np = test_df['PIT502'].to_numpy() 
     test_label = test_df['label'].to_numpy()
@@ -38,11 +59,6 @@ def load_SWAT_PIT502(abspath = False):
     test = test_np[0: 4000].reshape(-1, 1)
     training = test_np[4000: 16000].reshape(-1, 1)
     valid = test_np[16000: 18000].reshape(-1, 1)
-
-
-    # training = (training - np.mean(training)) / (np.std(training))
-    # test = (test - np.mean(test)) / np.std(test)
-    # valid = (valid - np.mean(valid)) / np.std(valid)
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -58,12 +74,8 @@ def load_SWAT_PIT502(abspath = False):
 
 def load_SMAP_P1(abspath = False):
     if abspath == False:
-        test_data = np.load('datasets/SMAP/tmp/P-1_test.npy')
-        train_data = np.load('datasets/SMAP/tmp/P-1_train.npy')
-    else:
-        test_data = np.load('/home/new_lab/test/ensemble_bae/datasets/SMAP/tmp/P-1_test.npy')
-        train_data = np.load('/home/new_lab/test/ensemble_bae/datasets/SMAP/tmp/P-1_train.npy')
-
+        test_data = np.load('./datasets/SMAP/P-1_test.npy')
+        train_data = np.load('./datasets/SMAP/P-1_train.npy')
 
     training = train_data[:, 0].reshape(-1, 1)
     # training = test_data[5000:, 0].reshape(-1, 1)
@@ -83,7 +95,7 @@ def load_SMAP_P1(abspath = False):
     return training, test, valid
 
 def load_SMAP_E1():
-    raw_data = np.load('datasets/SMAP/E-1.npy')
+    raw_data = np.load('./datasets/SMAP/E-1.npy')
 
     readings = raw_data[0: 6500, 0]
     idx_split = [0, 3500, 4500]
@@ -110,7 +122,7 @@ def load_SMAP_E1():
 
 
 def load_SMAP_E13():
-    raw_data = np.load('datasets/SMAP/E-13.npy')
+    raw_data = np.load('./datasets/SMAP/E-13.npy')
 
     readings = raw_data[0: 7000, 0]
     idx_split = [0, 4000, 5000]
@@ -137,7 +149,7 @@ def load_SMAP_E13():
 def load_NAB_Ambient():
 
     def load_data():
-        ambient_temp = pd.read_csv('ambient_temperature_system_failure.csv')
+        ambient_temp = pd.read_csv('./datasets/NAB-known-anomaly/ambient_temperature_system_failure.csv')
         anomalies_label = ['2013-12-22 20:00:00', '2014-04-13 09:00:00']
         
         anomalies_idx = []
@@ -171,9 +183,7 @@ def load_NAB_Ambient():
 
 def load_NAB_Texi(abspath=False):
     if abspath == False:
-        data_dir = 'datasets/NAB-known-anomaly/csv-files/nyc_taxi.csv'
-    else:
-        data_dir = np.load('/home/new_lab/test/ensemble_bae/datasets/NAB-known-anomaly/csv-files/nyc_taxi.csv')
+        data_dir = './datasets/NAB-known-anomaly/nyc_taxi.csv'
 
     def load_data(data_dir):
         raw = pd.read_csv(data_dir)
@@ -220,9 +230,7 @@ def load_NAB_Texi2(abspath=False):
         The difference between this and the above is that we use the whole dataset for visualization
     '''
     if abspath == False:
-        data_dir = 'datasets/NAB-known-anomaly/csv-files/nyc_taxi.csv'
-    else:
-        data_dir = '/home/new_lab/test/ensemble_bae/datasets/NAB-known-anomaly/csv-files/nyc_taxi.csv'
+        data_dir = './datasets/NAB-known-anomaly/nyc_taxi.csv'
 
     def load_data(data_dir):
         raw = pd.read_csv(data_dir)
@@ -265,7 +273,7 @@ def load_NAB_Texi2(abspath=False):
     return training, test, valid
 
 def load_NAB_Machine():
-    data_dir = 'datasets/NAB-known-anomaly/csv-files/machine_temperature_system_failure.csv'
+    data_dir = './datasets/NAB-known-anomaly/machine_temperature_system_failure.csv'
     def load_data(data_dir):
         raw = pd.read_csv(data_dir)
 
@@ -309,14 +317,9 @@ def load_NAB_Machine():
 
 def load_SMD_Machine2_1():
 
-    raw_test = np.genfromtxt('datasets/SMD/test/machine-2-1.txt',
+    raw_test = np.genfromtxt('./datasets/SMD/test/machine-2-1.txt',
                             dtype=np.float64,
                             delimiter=',')
-
-    raw_train = np.genfromtxt('datasets/SMD/train/machine-1-1.txt',
-                            dtype=np.float64,
-                            delimiter=',')
-
 
     raw_labels = np.genfromtxt('datasets/SMD/labels/machine-2-1.txt',
                             dtype=np.float64,
@@ -347,7 +350,7 @@ def load_SMD_Machine2_1():
     return training, test, valid
 
 def load_SMD_Machine1_3():
-    raw_test = np.genfromtxt('datasets/SMD/test/machine-1-3.txt',
+    raw_test = np.genfromtxt('./datasets/SMD/test/machine-1-3.txt',
                          dtype=np.float64,
                          delimiter=',')
 
@@ -357,15 +360,6 @@ def load_SMD_Machine1_3():
     training = readings[idx_split[0]: idx_split[1]].reshape(-1,1)
     valid = readings[idx_split[2]: idx_split[3]].reshape(-1,1)
     test = readings[idx_split[1]: idx_split[2]].reshape(-1,1)
-
-    # valid = training[(int)(0.8 * training.shape[0]): ].reshape(-1, 1)
-    # training = training[: (int)(0.8 * training.shape[0])].reshape(-1, 1)
-    # test = raw_test[15000: 18000, 0].reshape(-1,1)
-
-
-    # labels (500, 530, ) (1100, 1500)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -382,7 +376,7 @@ def load_SMD_Machine1_3():
 
 
 def load_SMD_Machine3_4():
-    raw_test = np.genfromtxt('datasets/SMD/test/machine-3-4.txt',
+    raw_test = np.genfromtxt('./datasets/SMD/test/machine-3-4.txt',
                          dtype=np.float64,
                          delimiter=',')
 
@@ -393,14 +387,6 @@ def load_SMD_Machine3_4():
     valid = readings[idx_split[1]: idx_split[2]].reshape(-1,1)
     test = readings[idx_split[0]: idx_split[1]].reshape(-1,1)
 
-    # valid = training[(int)(0.8 * training.shape[0]): ].reshape(-1, 1)
-    # training = training[: (int)(0.8 * training.shape[0])].reshape(-1, 1)
-    # test = raw_test[15000: 18000, 0].reshape(-1,1)
-
-
-    # labels (500, 530, ) (1100, 1500)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -416,16 +402,13 @@ def load_SMD_Machine3_4():
 
 
 def load_MSL_F7():
-    raw_data_train = np.load('datasets/MSL/F-7_train.npy')[:, 0]
-    raw_data_test = np.load('datasets/MSL/F-7_test.npy')[:, 0]
+    raw_data_train = np.load('./datasets/MSL/F-7_train.npy')[:, 0]
+    raw_data_test = np.load('./datasets/MSL/F-7_test.npy')[:, 0]
 
     training = raw_data_train.reshape(-1,1)
     valid = raw_data_test[4000: ].reshape(-1,1)
     test = raw_data_test[: 4000].reshape(-1,1)
 
-    # labels (500, 530, ) (1100, 1500)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -440,16 +423,12 @@ def load_MSL_F7():
     return training, test, valid
 
 def load_MSL_P11():
-    raw_data_train = np.load('datasets/MSL/P-11_train.npy')[:, 0]
-    raw_data_test = np.load('datasets/MSL/P-11_test.npy')[:, 0]
+    raw_data_train = np.load('./datasets/MSL/P-11_train.npy')[:, 0]
+    raw_data_test = np.load('./datasets/MSL/P-11_test.npy')[:, 0]
 
     training = raw_data_train.reshape(-1,1)
     valid = raw_data_test[2500: ].reshape(-1,1)
     test = raw_data_test[:2500].reshape(-1,1)
-
-    # labels (500, 530, ) (1100, 1500)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -465,7 +444,7 @@ def load_MSL_P11():
 
 def load_UCR_InternalBleeding16():
 
-    raw_data_test = np.genfromtxt('datasets/UCR/135_UCR_Anomaly_InternalBleeding16_1200_4187_4199.txt',
+    raw_data_test = np.genfromtxt('./datasets/UCR/135_UCR_Anomaly_InternalBleeding16_1200_4187_4199.txt',
 								dtype=np.float64,
 								delimiter=',')
     print(raw_data_test.shape)
@@ -473,10 +452,6 @@ def load_UCR_InternalBleeding16():
     training = raw_data_test[idx_split[0]: idx_split[1]].reshape(-1,1)
     valid = raw_data_test[idx_split[2]: idx_split[3]].reshape(-1,1)
     test = raw_data_test[idx_split[1]: idx_split[2]].reshape(-1,1)
-
-    # labels (4185, 4200)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)
@@ -491,19 +466,14 @@ def load_UCR_InternalBleeding16():
     return training, test, valid
 
 def load_UCR_InternalBleeding17():
-    raw_data_test = np.genfromtxt('datasets/UCR/136_UCR_Anomaly_InternalBleeding17_1600_3198_3309.txt',
+    raw_data_test = np.genfromtxt('./datasets/UCR/136_UCR_Anomaly_InternalBleeding17_1600_3198_3309.txt',
                                     dtype=np.float64,
                                     delimiter=',')
     print(raw_data_test.shape)
-    data_label = np.load('datasets/UCR/135_labels.npy')
     idx_split = [0, 1000, 4000] # [1000, 2000, 4000]
     training = raw_data_test[idx_split[2]: ].reshape(-1,1)
     valid = raw_data_test[idx_split[0]: idx_split[1]].reshape(-1,1)
     test = raw_data_test[idx_split[1]: idx_split[2]].reshape(-1,1)
-
-    # labels (3200, 3300)
-    # lables = np.ones(idx_split[1] - idx_split[0]) # 2150 - 2350 is anomaly
-    # lables[2150:2350] = 0
 
     scaler = StandardScaler()
     scaler.fit(training)

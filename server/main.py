@@ -8,18 +8,12 @@ import numpy as np
 import sys, os
 import torch
 
-if '/home/new_lab/test/ensemble_bae' not in sys.path:
-    sys.path.append('/home/new_lab/test/ensemble_bae')
-if '/home/new_lab/test/ensemble_bae/server' not in sys.path:
-    sys.path.append('/home/new_lab/test/ensemble_bae/server')
-
-
-from store import DataStore
-import process_model as pm 
+from server.store import DataStore
+import server.process_model as pm 
 
 data_store = DataStore()
 
-bvae_ens = pm.init_model() # model init
+bae_ens = pm.init_model() # model init
 
 app = FastAPI()
 origins = [
@@ -34,8 +28,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 class Item(BaseModel):
@@ -54,10 +46,6 @@ class Anomaly_Item(BaseModel):
     x2: int
     anomaly_score: float
 
-# class Mult_epis_response(BaseModel):
-#     epis_1: List[Item]
-#     epis_2: List[Item]
-#     epis_3: List[Item]
 
 class Mult_epis_response(BaseModel):
     epis_upper_50: Tuple[List[Item], List[Item], List[Item]]
@@ -73,7 +61,7 @@ def test():
 @app.get("/api/SMAP_P1", response_model=List[Item])
 def load_SMAP_P1():
    
-    data: pd.Series = pd.read_csv('SMAP_P1.csv').astype("Float32")
+    data: pd.Series = pd.read_csv('./server/SMAP_P1.csv').astype("Float32")
     x = np.array(data.index)
     y = np.array(data['value'])
 
@@ -116,28 +104,25 @@ def downsample(dataset="SMAP_P1"):
 
 @app.get("/api/epis", response_model=Epis_response)
 def get_epis():
-    result = pm.predict_epis(bvae_ens)
+    result = pm.predict_epis(bae_ens)
     return result
 
 @app.get("/api/mult_epis", response_model=Mult_epis_response)
 def get_multi_epis(x0: float, x1: float):
     x0 = int(x0)
     x1 = int(x1)
-    result = pm.predict_mult_epis(bvae_ens, index=[x0, x1])
+    result = pm.predict_mult_epis(bae_ens, index=[x0, x1])
     return result
 
 @app.get("/api/alea", response_model=List[Item])
 def get_alea():
-    alea = pm.predict_alea(bvae_ens)
+    alea = pm.predict_alea(bae_ens)
     return alea
 
 @app.get("/api/anomaly", response_model=List[Anomaly_Item])
 def get_anomaly():
-    anomaly = pm.predict_error(bvae_ens)
+    anomaly = pm.predict_error(bae_ens)
     return anomaly
 
-
-# if __name__ == "__main__":
-#     load_SMAP_P1()
     
 

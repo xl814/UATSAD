@@ -32,17 +32,6 @@ interface LineChartProps {
 interface MainChartProps {
     data: Array<Item>,
     dataset: string,
-    // showEpis: boolean,
-    // showDownsampled: boolean,
-    // showAleatoric: boolean,
-    // showAnomaly: boolean,
-
-    // epis_50: [number, number][];
-    // epis_95: [number, number][];
-    // downsampled_data: Array<Item>;
-    // aleatoric: [number, number][];
-    // anomaly_response: {};
-
 
     // plot param
     width?: number,
@@ -53,21 +42,6 @@ interface MainChartProps {
     marginLeft?: number,
 }
 
-interface EpisChartProps{
-    epis_upper_95: Array<Item>,
-    epis_lower_95: Array<Item>,
-    epis_upper_50: Array<Item>,
-    epis_lower_50: Array<Item>,
-}
-
-interface AleaChartProps{
-    alea: [number, number][],
-}
-
-interface EpisItem{
-    upper: number,
-    lower: number
-}
 
 let epis_50: [number, number][] = [];
 let epis_95: [number, number][] = [];
@@ -79,7 +53,7 @@ let current_brush_index = 0;
 const epis_view_height = 50;
 const alea_view_height = 100;
 
-export const colorScale = d3.scaleSequential(d3.interpolateRgb("#fff042", "#ff4254")).domain([0, 1]);
+export const colorScale = d3.scaleSequential(d3.interpolateRgb("#fff042", "#ff6842")).domain([0, 1]);
 
 function Legend({width=900, height=15}){
     useEffect(()=>{        
