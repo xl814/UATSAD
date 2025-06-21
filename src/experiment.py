@@ -18,11 +18,11 @@ def get_args():
 
   
     parser.add_argument('--n_epochs', default = 20, type = int)
-    parser.add_argument('--ensemble_examples', default = 50, type = int)
+    parser.add_argument('--ensemble_examples', default = 20, type = int)
     parser.add_argument('--batch_size', default = 64, type = int)
     parser.add_argument('--win_size', default=128, type=int)
     parser.add_argument('--learning_rate', default = 1e-3, type = float, help='learning rate for var tunning phase')
-
+    parser.add_argument('--epochs2', default = 10, type=int, help='epochs for var tunning phase')
     parser.add_argument('--seed', default= 2, type=int, help='random seed')
 
     parser.add_argument('--dataset', type=str, help='dataset name')
@@ -325,11 +325,11 @@ def main(args):
     bae_ens.toDevice(config.device)
 
     # training
-    config.n_epochs = 5
+    config.n_epochs = 10
     train(train_dataloader, valid_dataloader, bae_ens)
 
     if args.loss_type != "mse" :
-        config.n_epochs = 5
+        config.n_epochs = args.epochs2
         print("-------------- var tunning --------------")
         bae_ens.tunning_var(args.learning_rate)
         bae_ens.set_loss_type(args.loss_type)

@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 def get_args():
     parser = argparse.ArgumentParser(description=None)
 
-    parser.add_argument('--n_epochs', default = 20, type = int)
-    parser.add_argument('--ensemble_examples', default = 50, type = int)
-    parser.add_argument('--batch_size', default = 32, type = int)
+    parser.add_argument('--epochs2', default = 10, type = int)
+    parser.add_argument('--ensemble_examples', default = 20, type = int)
+    parser.add_argument('--batch_size', default = 16, type = int)
     parser.add_argument('--win_size', default=64, type=int)
     parser.add_argument('--learning_rate', default = 1e-4, type = float)
 
@@ -44,7 +44,7 @@ class Config:
     # training configure
     n_epochs = 15
     lr = 1e-3
-    batch_size = 16 # 32
+    batch_size = 16 
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -85,13 +85,13 @@ def save_result(metrics, seed, alea, anomaly_value):
         metrics: List[float]. \\
         Includes "nll", "rnll", "beta_nll", "mts_nll"
     '''
-    dirname = f"./result/toy_example-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+    dirname = f"./result/toy_example"
     os.makedirs(dirname, exist_ok=True)
 
     df = pd.DataFrame([[metrics[0], metrics[1], metrics[2], metrics[3], seed]], columns=['nll', 'rnll', 'beta_nll', 'mts_nll', 'seed'])
     filename = f'{dirname}/alea_{alea}_anomaly_{anomaly_value}_lambda1_{args.lambda1}_lambda2_{args.lambda2}.csv'
     
-    mode = 'a' if  os.path.exists(filename) else 'w'
+    mode = 'a' if os.path.exists(filename) else 'w'
     header = mode == 'w'
     df.to_csv(filename, mode=mode, header=header, index=False)
 
@@ -177,8 +177,10 @@ def run(args, loss_type, train_syn_dataloader, valid_syn_dataloader, true_var_he
 
     print(f" ******** training with var tunning ********")
     
-    config.n_epochs = 10
+    config.n_epochs = args.epochs2
+    bae_ens.set_rnll_hyper(args.lambda1, args.lambda2)
     bae_ens.tunning_var(args.learning_rate)
+    config.batch_size = args.batch_size
     train(train_syn_dataloader, config)
 
     # predict 

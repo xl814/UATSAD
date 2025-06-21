@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Result Reproduction
 1. Toy experiment (For the related implementation, please referto `src/`):
-    - reproduce the **experiment 1** in the main text:
+    - reproduce the toy example in the main text:
         ```bash
         ./scripts/toy_experiment.sh
         ```
@@ -37,19 +37,21 @@ pip install -r requirements.txt
 
 ## Run the Application
 ### 1. Run the server
-- Take `SMAP-P1` as an example, we first train the model :
+- Take `SMAP_P1` as an example, we first train the model :
     ```bash
-    python ./server/process_model.py 
+    python ./server/process_model.py --datset SMAP_P1
     ```
 - And, load the trained model to run the server:
     ```bash
     fastapi dev server/main.py
     ```
+**NOTE**: Each time you switch to a different dataset, the model must be retrained and saved. If you want to use your own data, please add it to `src/dataprovider` and make appropriate modifications to `src/process_model.py`.
 ### 2. Launch UATSAD
 ```bash
-    cd react-app
-    npm run dev
+cd react-app
+npm run dev
 ```
+
 ## Cite this work
 
 ## License

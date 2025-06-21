@@ -3,6 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import sys, os
 from scipy.ndimage import gaussian_filter1d
+import argparse
 
 if __package__ is None:
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -15,8 +16,6 @@ import src.utils as utils
 from .store import DataStore
 
 data_store = DataStore()
-
-# model config
 
 class Config:
     # model
@@ -245,8 +244,6 @@ def predict_error(bae_ens, cmd=False):
     error_smoothed = gaussian_filter1d(error_mean, sigma=15)
     prefix = np.ones(config.win_size - 1) * error_smoothed[0]
     error_smoothed = np.concatenate((prefix, error_smoothed))
-    # upper_bound = np.mean(error, axis=1) + 2 * error_std
-    # lower_bound = np.mean(error, axis=1) - 2 * error_std
 
     threshold = anomaly_threshold(bae_ens)
     predict_label = np.zeros(error_smoothed.shape)
@@ -278,17 +275,10 @@ def load_Dataset(dataset: str):
     data_store.add_data("test", test)
     data_store.add_data("valid", valid)
 
-def run(dataset: str, save=True):
-    if dataset == "SMAP_P1":
-        training, test, valid = load_SMAP_P1(abspath=True)
-    elif dataset == "NY_Taxi":
-        training, test, valid = load_NAB_Texi2(abspath=True)
-    elif dataset == "SWAT_PIT502":
-        training, test, valid = load_SWAT_PIT502(abspath=True)
-    else:
-        print(Exception(f"Dataset {dataset} not supported"))
-        return
-    
+def run(save=True):
+    training = data_store.get_data("training")
+    valid = data_store.get_data("valid")
+
     train_dataset = AESegLoader(training, config.win_size, "train")
     valid_dataset = AESegLoader(valid, config.win_size, "valid")
 
@@ -306,7 +296,6 @@ def run(dataset: str, save=True):
         drop_last=True,
     )
 
-    # training model
     bae_ens = BAE_Ensemble(M, AutoEncoder, config)
     bae_ens.toDevice(config.device)
 
@@ -322,15 +311,6 @@ def run(dataset: str, save=True):
         bae_ens.save(path="./saved_model/")
     return bae_ens
 
-def predict(bae_ens, dataset: str = "SMAP_P1") -> DataStore:
-    if dataset == "SMAP_P1":
-        training, test, valid = load_SMAP_P1(abspath=True)
-    # get aleatoric
-    anoamly_score = predict_error(bae_ens, test)
-    epis = predict_epis(bae_ens, test)
-    alea = predict_alea(bae_ens, test)
-
-    return anoamly_score, epis, alea
 
 def init_model():
     bae_ensemble = BAE_Ensemble(M, AutoEncoder, config)
@@ -362,10 +342,20 @@ def anomaly_threshold(bae_ens):
             train_nll[i*config.batch_size: (i+1)*config.batch_size, m] = torch.mean((x - predictions[m])**2, dim=(1,2)).detach().cpu().numpy()
 
     train_nll_mean = np.mean(train_nll, axis=1)
-    threshold = np.percentile(train_nll_mean, 96) # smap 90
+    threshold = np.percentile(train_nll_mean, 96) 
     return threshold
 
+
+def get_args():
+    parser = argparse.ArgumentParser(description=None)
+
+    parser.add_argument('--dataset', default = 'SMAP_P1', type = str, help="dataset: SMAP_P1, NY_Taxi, SWAT_PIT502, Toy_example")
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    load_Dataset("SMAP_P1")
-    bae_ens = run("SMAP_P1", save=True)
+    args = get_args()
+    load_Dataset(args.dataset)
+    bae_ens = run(save=True)
 
