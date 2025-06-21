@@ -1,11 +1,9 @@
 # UATSAD
-![License](https://img.shields.io/github/license/xl814/UATSAD)
-![Stars](https://img.shields.io/github/stars/xl814/UATSAD?style=social)
 
 This is the official implementation of the paper "Uncertainty-Aware Time Series Anomaly Detection
 Based on Deep Ensembles" 
 ## Prerequisites
-Make sure you have installed all of following prerequisites on yor machine:
+Make sure you have installed all of the following prerequisites on your machine:
 - Node.js (we used version 22.14.0)
 - Python (we used version 3.10)
 ## Installation
@@ -18,17 +16,17 @@ pip install -r requirements.txt
 ```
 
 ## Result Reproduction
-1. Toy experiment (For the related implementation, please referto `src/`):
-    - reproduce the toy example in the main text:
+1. Toy experiment (For the related implementation, please refer to `src/`):
+    - Reproduce the toy example in the main text:
         ```bash
         ./scripts/toy_experiment.sh
         ```
-        we provide a notebbok to visualize the toy example result in `src/toy_example.ipynb`.
-    - the result of hyperparameter sensitivity analysis experiments:
+        We provide a notebook to visualize the toy example result in `src/toy_example.ipynb`.
+    - The result of hyperparameter sensitivity analysis experiments:
         ```bash
         ./scripts/toy_experiment.sh sumplement
         ```
-2. Uncertainty calibration experimens reported in the paper 
+2. Uncertainty calibration experiments reported in the paper 
     ```bash
     ./scripts/run.sh
     ```
@@ -45,7 +43,7 @@ pip install -r requirements.txt
     ```bash
     fastapi dev server/main.py
     ```
-**NOTE**: Each time you switch to a different dataset, the model must be retrained and saved. If you want to use your own data, please add it to `src/dataprovider` and make appropriate modifications to `src/process_model.py`.
+**NOTE**: Each time you switch to a different dataset, the model must be retrained and saved. If you want to use your data, please add it to `src/dataprovider` and make appropriate modifications to `src/process_model.py`.
 ### 2. Launch UATSAD
 ```bash
 cd react-app
